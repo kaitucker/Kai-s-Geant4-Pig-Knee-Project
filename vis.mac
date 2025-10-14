@@ -1,0 +1,8 @@
+/control/verbose 2
+/run/verbose 2
+/vis/viewer/set/viewpointThetaPhi 90 180 deg
+/vis/viewer/set/style surface
+/vis/viewer/set/auxiliaryEdge true
+/vis/drawVolume
+/vis/viewer/set/autoRefresh true
+/vis/scene/add/axes 0 0 0 10 cm
