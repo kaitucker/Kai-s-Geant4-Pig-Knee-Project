@@ -1,0 +1,4 @@
+/run/initialize
+/gun/particle gamma       # X-rays treated as gammas with GEANT4
+/gun/energy 150 keV
+/run/beamOn 1000000   # 10^6 photons
