@@ -1,0 +1,17 @@
+/control/verbose 2
+/run/verbose 2
+/tracking/verbose 1
+
+# Open a Qt + OpenGL window
+/vis/open OGLSQt 600x600-0+0
+/vis/viewer/set/style surface
+/vis/viewer/set/hiddenEdge false
+/vis/viewer/set/auxiliaryEdge true
+/vis/viewer/set/projection perspective
+/vis/viewer/set/viewpointThetaPhi 90 0
+
+/vis/scene/create
+/vis/scene/add/volume
+/vis/sceneHandler/attach
+/vis/scene/endOfEventAction accumulate
+/vis/viewer/flush
