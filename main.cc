@@ -5,6 +5,7 @@
 #include "DetectorConstruction.hh"
 #include "PhysicsList.hh"
 #include "ActionInitialization.hh"
+
 int main(int argc, char** argv) {
 // Make run manager
 auto* runManager = G4RunManagerFactory::CreateRunManager();
