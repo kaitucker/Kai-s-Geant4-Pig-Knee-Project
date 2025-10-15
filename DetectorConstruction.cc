@@ -31,10 +31,12 @@
 #include <sstream>
 #include <algorithm>
 #include "G4EmStandardPhysics.hh"
+
 DetectorConstruction::DetectorConstruction() : G4VUserDetectorConstruction() {}
 DetectorConstruction::~DetectorConstruction() {}
 G4VPhysicalVolume* DetectorConstruction::Construct() {
 using namespace CLHEP;
+  
 // -------------------- TUNABLE PARAMETERS --------------------------------
 const G4double tol = 0.01*cm; // geometry tolerance
 const G4double tiny_gap = 0.5*mm; // clearance above bowl floor
@@ -46,7 +48,7 @@ const G4double tendon_thick = 11.23*mm; // Z axis
 const G4int nFasciclesTarget = 300; // number of fascicles
 const G4double fascicle_major = 0.30*mm; // ellipse major axis
 const G4double fascicle_minor = 0.20*mm; // ellipse minor axis
-const G4int nSegmentsPerFibre = 12; // segmentation (crimp) per fascicle
+const G4int nSegmentsPerFibre = 12; // crimp per fascicle
 const G4double crimpAmp = 0.10 * fascicle_major; // 10% amplitude
 const G4double crimpLambda = 2.0*mm; // wavelength
 const G4double packing_pitch = 0.36*mm; // packing pitch approx
@@ -62,7 +64,7 @@ const G4double cortical_thickness = 3.5*mm;
 // Soft tissue composition (75% muscle / 25% fat)
 const double muscle_frac = 0.75;
 const double fat_frac = 0.25;
-// --- NEW: Adjustable Collimator Jaw Parameters ---
+// --- Adjustable Collimator Jaw Parameters ---
 const G4double x_opening = 12.3*cm; // Total opening width along X
 const G4double y_opening = 12.3*cm; // Total opening width along Y
 const G4double jaw_thickness = 16.5*cm; // Thickness of jaws along Z
@@ -457,7 +459,7 @@ auto softShellLog = new G4LogicalVolume(softShellSolid, SoftShell, "SoftShellLog
 // Place soft shell at knee center (world position x_pig, y_pig, z_pig)
 new G4PVPlacement(0, G4ThreeVector(x_pig, y_pig, z_pig), softShellLog, "SoftShell", logicCavity, false, 0, false);
 // -------------------- Scoring: Single MFD attached to tendon mother ----------------
-// FIXED: Proper detector registration for modern Geant4
+// Proper detector registration for modern Geant4
 
 G4SDManager* sdman = G4SDManager::GetSDMpointer();
 
