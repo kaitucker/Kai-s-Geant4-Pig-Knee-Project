@@ -1,14 +1,19 @@
-#ifndef ACTIONINITIALIZATION_HH
-#define ACTIONINITIALIZATION_HH 1
+#ifndef ActionInitialization_h
+#define ActionInitialization_h 1
 
 #include "G4VUserActionInitialization.hh"
 
-class ActionInitialization : public G4VUserActionInitialization {
+class ActionInitialization : public G4VUserActionInitialization
+{
 public:
-    ActionInitialization();
-    virtual ~ActionInitialization();
-    virtual void BuildForMaster() const override;
-    virtual void Build() const override;
+  ActionInitialization();
+  virtual ~ActionInitialization();
+
+  // master thread actions
+  virtual void BuildForMaster() const override;
+
+  // worker threads actions
+  virtual void Build() const override;
 };
 
 #endif
