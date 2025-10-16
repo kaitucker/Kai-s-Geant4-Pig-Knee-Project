@@ -29,3 +29,27 @@ target_link_libraries(pigknee ${Geant4_LIBRARIES})
 # --- Installation ---
 # This section defines where the executable should be installed.
 install(TARGETS pigknee DESTINATION bin)
+
+include(FetchContent)
+
+# Download and build GoogleTest automatically
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/release-1.15.2.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+add_executable(test_init test/test_initialization.cc)
+target_link_libraries(test_init ${Geant4_LIBRARIES})
+add_test(NAME InitializationTest COMMAND test_init)
+
+add_executable(test_pigknee test/test_initialization_gtest.cc)
+target_link_libraries(test_pigknee
+  PRIVATE
+    ${Geant4_LIBRARIES}
+    GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(test_pigknee)
