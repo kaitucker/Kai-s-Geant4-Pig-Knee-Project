@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -14,9 +14,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ libxerces-c-dev qtbase5-dev
-          # Optional: Geant4 runtime (for building tests without graphics)
-          sudo apt-get install -y geant4 geant4-data
+          sudo apt-get install -y cmake g++ libxerces-c-dev qtbase5-dev \
+              libgl1-mesa-dev libglu1-mesa-dev geant4 geant4-data
 
       - name: Configure and build
         run: |
