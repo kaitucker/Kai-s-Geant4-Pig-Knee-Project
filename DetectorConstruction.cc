@@ -475,10 +475,6 @@ sdman->AddNewDetector(tendonMFD);
 SetSensitiveDetector(tendonLog, tendonMFD);
 
 G4cout << "Tendon MFD registered and attached to PatellarTendonLog." << G4endl;
-// -------------------- Flat panel & collimator ------------------
-auto detSolid = new G4Box("FlatPanelSolid", det_X/2.0, det_Y/2.0, det_Z/2.0);
-auto detLog = new G4LogicalVolume(detSolid, AmorphSe, "FlatPanel");
-new G4PVPlacement(0, G4ThreeVector(det_center_x, det_center_y, det_center_z), detLog, "FlatPanel", logicCavity, false, 0, false);
 // --- NEW: Adjustable 4-jaw collimator ---
 auto jaw_solid = new G4Box("JawSolid", jaw_width/2.0, jaw_length/2.0, jaw_thickness/2.0);
 auto jaw_log = new G4LogicalVolume(jaw_solid, lead, "JawLog");
