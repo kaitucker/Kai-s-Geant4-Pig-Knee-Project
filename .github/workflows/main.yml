@@ -6,16 +6,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Build and install Geant4 from source
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake g++ libxerces-c-dev qtbase5-dev \
-              libgl1-mesa-dev libglu1-mesa-dev geant4 geant4-data
+              libgl1-mesa-dev libglu1-mesa-dev wget
+          wget https://gitlab.cern.ch/geant4/geant4/-/archive/v11.2.2/geant4-v11.2.2.tar.gz
+          tar -xzf geant4-v11.2.2.tar.gz
+          mkdir geant4-v11.2.2-build && cd geant4-v11.2.2-build
+          cmake ../geant4-v11.2.2 -DCMAKE_INSTALL_PREFIX=/usr/local -DGEANT4_BUILD_MULTITHREADED=OFF -DGEANT4_USE_SYSTEM_EXPAT=ON -DGEANT4_INSTALL_DATA=ON
+          make -j2
+          sudo make install
 
       - name: Configure and build
         run: |
