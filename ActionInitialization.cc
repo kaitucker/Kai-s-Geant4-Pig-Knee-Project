@@ -12,6 +12,7 @@ void ActionInitialization::BuildForMaster() const
 // Only the RunAction is needed on the master for summaries
 SetUserAction(new RunAction());
 }
+//ONLY CARE ABOUT THIS:
 void ActionInitialization::Build() const
 {
 // create the RunAction first so pointers can be passed to other actions
