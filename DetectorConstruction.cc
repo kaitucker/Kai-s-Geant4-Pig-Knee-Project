@@ -507,7 +507,6 @@ MCLLog->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,0.6,0.2)));
 LCLLog->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,0.6,0.2)));
 tendonLog->SetVisAttributes(new G4VisAttributes(G4Colour(0.2,0.8,0.2,0.75)));
 softShellLog->SetVisAttributes(new G4VisAttributes(G4Colour(0.95,0.85,0.8,0.45)));
-detLog->SetVisAttributes(new G4VisAttributes(G4Colour(0.2,0.6,1.0)));
 jaw_log->SetVisAttributes(new G4VisAttributes(G4Colour(0.15,0.15,0.15))); // vis for new jaws
 logicCavity->SetVisAttributes(new G4VisAttributes(G4Colour(0.95,0.95,0.95,0.0)));
 G4cout << "DetectorConstruction: built anatomically-oriented pig knee with tendon fascicles (detector = tendon mother)." << G4endl;
