@@ -2,6 +2,8 @@
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
+#include "EventAction.hh"
+
 ActionInitialization::ActionInitialization()
 : G4VUserActionInitialization()
 {}
@@ -15,13 +17,16 @@ SetUserAction(new RunAction());
 //ONLY CARE ABOUT THIS:
 void ActionInitialization::Build() const
 {
-  SetUserAction(new PrimaryGeneratorAction);
+  // create the RunAction first so pointers can be passed to other actions
+  RunAction* runAction = new RunAction();
+  SetUserAction(runAction); // <-- KEEP THIS
 
-  auto runAction = new RunAction;
-  SetUserAction(runAction);
+  SetUserAction(new PrimaryGeneratorAction());
 
-  auto eventAction = new EventAction(runAction); // New line
-  SetUserAction(eventAction);                     // New line
+  // --- REPLACE THE OLD LOGIC WITH THIS ---
+  auto eventAction = new EventAction(runAction);
+  SetUserAction(eventAction);
 
-  SetUserAction(new SteppingAction(eventAction)); // Pass eventAction, not runAction
+  // Pass the eventAction pointer to SteppingAction, not the runAction pointer
+  SetUserAction(new SteppingAction(eventAction, "PatellarTendonLog"));
 }
