@@ -2,6 +2,7 @@
 #include "G4Step.hh"
 #include "G4TouchableHandle.hh"
 #include "G4LogicalVolume.hh"
+#include "EventAction.hh"
 
 SteppingAction::SteppingAction(EventAction* eventAction, const G4String& targetLogicalName)
  : G4UserSteppingAction(), fEventAction(eventAction), fTargetLogicalName(targetLogicalName) {}
