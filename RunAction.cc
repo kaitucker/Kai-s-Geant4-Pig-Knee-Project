@@ -1,41 +1,31 @@
 #include "RunAction.hh"
-#include "DetectorConstruction.hh" // <-- ADD
+#include "DetectorConstruction.hh"
 
 #include "G4Run.hh"
-#include "G4RunManager.hh" // <-- ADD
-#include "G4UnitsTable.hh"
+#include "G4RunManager.hh"
+#include "G4SDManager.hh"
+#include "G4THitsMap.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4AccumulableManager.hh" // <-- ADD
-
-#include <iomanip> // <-- ADD for formatting output
+#include "G4UnitsTable.hh"
 
 RunAction::RunAction()
  : G4UserRunAction(),
-   fTotalEdep(0.),
-   fTotalEdep2(0.)
-{
-  // Register the accumulables with the manager
-  G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
-  accumulableManager->Register(fTotalEdep);
-  accumulableManager->Register(fTotalEdep2);
-}
+   fEdepHCID(-1)
+{}
 
 RunAction::~RunAction()
 {}
 
-void RunAction::BeginOfRunAction(const G4Run*)
+void RunAction::BeginOfRunAction(const G4Run* run)
 {
-  // Reset accumulables to their initial values
-  G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
-  accumulableManager->Reset();
+  G4cout << "### Run " << run->GetRunID() << " start." << G4endl;
 
-  G4cout << "### Run start" << G4endl;
-}
-
-void RunAction::AddEdep(G4double edep)
-{
-  fTotalEdep += edep;
-  fTotalEdep2 += edep*edep;
+  // Get the Hits Collection ID for our energy deposit primitive scorer.
+  // The names are defined in DetectorConstruction.cc ("TendonMFD"/"Edep")
+  if (fEdepHCID < 0) {
+    auto sdManager = G4SDManager::GetSDMpointer();
+    fEdepHCID = sdManager->GetCollectionID("TendonMFD/Edep");
+  }
 }
 
 void RunAction::EndOfRunAction(const G4Run* run)
@@ -43,40 +33,41 @@ void RunAction::EndOfRunAction(const G4Run* run)
   G4int nofEvents = run->GetNumberOfEvent();
   if (nofEvents == 0) return;
 
-  // Merge accumulables from all threads
-  G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
-  accumulableManager->Merge();
+  // Get the hits collection for this run
+  auto hce = run->GetHCofThisEvent();
+  if (!hce) return;
 
-  // Get the final values
-  G4double edep  = fTotalEdep.GetValue();
-  G4double edep2 = fTotalEdep2.GetValue();
+  // Get the hits map for our energy deposit scorer
+  auto hitsMap = static_cast<G4THitsMap<G4double>*>(hce->GetHC(fEdepHCID));
 
-  // Calculate the standard deviation
-  G4double rms = edep2 - edep*edep/nofEvents;
-  if (rms > 0.) rms = std::sqrt(rms); else rms = 0.;
+  G4double totalEdep = 0.;
+  if (hitsMap && !hitsMap->GetMap()->empty()) {
+      // The map contains the total energy deposited in the volume.
+      // For a single volume, it's the first (and only) entry.
+      totalEdep = *(hitsMap->GetMap()->begin()->second);
+  }
 
   // Get the mass of the scoring volume from DetectorConstruction
   const auto detConstruction = static_cast<const DetectorConstruction*>(
     G4RunManager::GetRunManager()->GetUserDetectorConstruction());
   G4double mass = detConstruction->GetScoringVolume()->GetMass();
 
-  // Calculate the dose and its uncertainty
+  // Calculate the dose
   G4double dose = 0.;
-  G4double rmsDose = 0.;
   if (mass > 0.) {
-    dose = edep / mass;
-    rmsDose = rms / mass;
+    dose = totalEdep / mass;
   }
 
-  // Print the results
-  G4cout << "### Run end" << G4endl;
-  G4cout << "--------------------End of Run-----------------------" << G4endl;
-  G4cout << " The run consisted of " << nofEvents << " events." << G4endl;
-  G4cout << " The mass of the scoring volume (PatellarTendonLog) is: "
-         << G4BestUnit(mass, "Mass") << G4endl;
-  G4cout << " Total energy deposited in scoring volume: "
-         << G4BestUnit(edep, "Energy") << " +/- " << G4BestUnit(rms, "Energy") << G4endl;
-  G4cout << " Mean dose to scoring volume: "
-         << G4BestUnit(dose, "Dose") << " +/- " << G4BestUnit(rmsDose, "Dose") << G4endl;
-  G4cout << "------------------------------------------------------------" << G4endl << G4endl;
+  // Print the final, merged results
+  if (IsMaster()) {
+    G4cout << "--------------------End of Global Run-----------------------" << G4endl;
+    G4cout << " The run consisted of " << nofEvents << " events." << G4endl;
+    G4cout << " The mass of the scoring volume (PatellarTendonLog) is: "
+           << G4BestUnit(mass, "Mass") << G4endl;
+    G4cout << " Total energy deposited in scoring volume: "
+           << G4BestUnit(totalEdep, "Energy") << G4endl;
+    G4cout << " Mean dose to scoring volume: "
+           << G4BestUnit(dose, "Dose") << G4endl;
+    G4cout << "------------------------------------------------------------" << G4endl << G4endl;
+  }
 }
