@@ -17,16 +17,11 @@ SetUserAction(new RunAction());
 //ONLY CARE ABOUT THIS:
 void ActionInitialization::Build() const
 {
-  // create the RunAction first so pointers can be passed to other actions
   RunAction* runAction = new RunAction();
-  SetUserAction(runAction); // <-- KEEP THIS
+  SetUserAction(runAction);
 
   SetUserAction(new PrimaryGeneratorAction());
 
-  // --- REPLACE THE OLD LOGIC WITH THIS ---
   auto eventAction = new EventAction(runAction);
   SetUserAction(eventAction);
-
-  // Pass the eventAction pointer to SteppingAction, not the runAction pointer
-  SetUserAction(new SteppingAction(eventAction, "PatellarTendonLog"));
 }
