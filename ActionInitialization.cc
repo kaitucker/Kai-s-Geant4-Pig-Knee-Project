@@ -15,11 +15,13 @@ SetUserAction(new RunAction());
 //ONLY CARE ABOUT THIS:
 void ActionInitialization::Build() const
 {
-// create the RunAction first so pointers can be passed to other actions
-RunAction* runAction = new RunAction();
-SetUserAction(new PrimaryGeneratorAction()); // must be registered
-SetUserAction(runAction); // RunAction for this worker
-// Register SteppingAction and pass runAction pointer so it can call AddEdep(...)
-SetUserAction(new SteppingAction(runAction, "PatellarTendonLog"));
+  SetUserAction(new PrimaryGeneratorAction);
 
+  auto runAction = new RunAction;
+  SetUserAction(runAction);
+
+  auto eventAction = new EventAction(runAction); // New line
+  SetUserAction(eventAction);                     // New line
+
+  SetUserAction(new SteppingAction(eventAction)); // Pass eventAction, not runAction
 }
