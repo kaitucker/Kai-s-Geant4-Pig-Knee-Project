@@ -1,0 +1,21 @@
+# Tell Geant4 to use the VRML driver, which saves output to a file
+/vis/open VRML2FILE
+
+# Draw the geometry
+/vis/drawVolume
+
+# Draw particle tracks and keep them after each event
+/vis/scene/add/trajectories
+/vis/scene/endOfEventAction accumulate
+
+# Set a viewpoint to look from the side
+/vis/viewer/set/viewpointThetaPhi 90 0 deg
+
+# Zoom in
+/vis/viewer/zoom 1.5
+
+# Run a single event
+/run/beamOn 1
+
+# IMPORTANT: This command writes the scene to the file
+/vis/viewer/flush
