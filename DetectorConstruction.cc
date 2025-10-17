@@ -331,6 +331,7 @@ G4ThreeVector tendonWorldPos(x_pig, y_pig, anteriorZ);
 G4ThreeVector tendonRelToCortical(0.0, 0.0, anteriorZ - z_pig);
 auto tendonBox = new G4Box("TendonBox", tendon_len/2.0, tendon_width/2.0, tendon_thick/2.0);
 auto tendonLog = new G4LogicalVolume(tendonBox, TendonMatrix, "PatellarTendonLog");
+fScoringVolume = tendonLog;
 // Place tendon as daughter of corticalLog so it is anatomically attached (it will override bone material where it overlaps)
 new G4PVPlacement(0, tendonRelToCortical, tendonLog, "PatellarTendon", corticalLog, false, 0, false);
 // -------------------- Create fascicle segments (extruded elliptical segments) ----
