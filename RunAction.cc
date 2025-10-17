@@ -21,7 +21,7 @@ void RunAction::BeginOfRunAction(const G4Run* run)
   G4cout << "### Run " << run->GetRunID() << " start." << G4endl;
 
   // Get the Hits Collection ID for our energy deposit primitive scorer.
-  // The names are defined in DetectorConstruction.cc ("TendonMFD"/"Edep")
+  // The names are defined in DetectorConstruction.cc ("TendonMFD" and "Edep").
   if (fEdepHCID < 0) {
     auto sdManager = G4SDManager::GetSDMpointer();
     fEdepHCID = sdManager->GetCollectionID("TendonMFD/Edep");
@@ -33,17 +33,14 @@ void RunAction::EndOfRunAction(const G4Run* run)
   G4int nofEvents = run->GetNumberOfEvent();
   if (nofEvents == 0) return;
 
-  // Get the hits collection for this run
-  auto hce = run->GetHCofThisEvent();
-  if (!hce) return;
-
-  // Get the hits map for our energy deposit scorer
-  auto hitsMap = static_cast<G4THitsMap<G4double>*>(hce->GetHC(fEdepHCID));
+  // The 'GetHCofThisEvent()' method was incorrect.
+  // We get the merged hits collection directly from the G4Run object using its ID.
+  auto hitsMap = static_cast<G4THitsMap<G4double>*>(run->GetHC(fEdepHCID));
 
   G4double totalEdep = 0.;
   if (hitsMap && !hitsMap->GetMap()->empty()) {
-      // The map contains the total energy deposited in the volume.
-      // For a single volume, it's the first (and only) entry.
+      // The map contains the total energy deposited.
+      // For a single scoring volume, it's the first (and only) entry.
       totalEdep = *(hitsMap->GetMap()->begin()->second);
   }
 
@@ -58,8 +55,9 @@ void RunAction::EndOfRunAction(const G4Run* run)
     dose = totalEdep / mass;
   }
 
-  // Print the final, merged results
+  // Print the final, merged results for the entire run
   if (IsMaster()) {
+    G4cout << G4endl;
     G4cout << "--------------------End of Global Run-----------------------" << G4endl;
     G4cout << " The run consisted of " << nofEvents << " events." << G4endl;
     G4cout << " The mass of the scoring volume (PatellarTendonLog) is: "
