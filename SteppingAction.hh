@@ -5,6 +5,7 @@
 #include "G4String.hh"
 
 class G4Step;
+class EventAction;
 
 class SteppingAction : public G4UserSteppingAction {
 public:
