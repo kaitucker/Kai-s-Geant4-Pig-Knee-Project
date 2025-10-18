@@ -15,7 +15,7 @@
 /vis/viewer/zoom 1.5
 
 # Run a single event
-/run/beamOn 1
+/run/beamOn 30
 
 # IMPORTANT: This command writes the scene to the file
 /vis/viewer/flush
